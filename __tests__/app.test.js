@@ -51,9 +51,23 @@ describe("GET", () => {
         });
     });
   });
+  describe("/api/articles/:articleId", () => {
+    test("responds with status 200 and correct article object", () => {
+      return request(app)
+        .get("/api/articles/1")
+        .expect(200)
+        .then((res) => {
+          const article = res.body.article;
+          expect(article).toEqual({
+            article_id: 1,
+            title: "Living in the shadow of a great man",
+            topic: "mitch",
+            author: "butter_bridge",
+            body: "I find this existence challenging",
+            created_at: expect.any(String),
+            votes: 100,
+          });
+        });
+    });
+  });
 });
-
-// test is array
-// test length
-// test object - for each?
-// 404 - global test?
