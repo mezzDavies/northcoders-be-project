@@ -58,15 +58,17 @@ describe("GET", () => {
         .expect(200)
         .then((res) => {
           const article = res.body.article;
-          expect(article).toEqual({
-            article_id: 1,
-            title: "Living in the shadow of a great man",
-            topic: "mitch",
-            author: "butter_bridge",
-            body: "I find this existence challenging",
-            created_at: expect.any(String),
-            votes: 100,
-          });
+          expect(article).toEqual(
+            expect.objectContaining({
+              article_id: 1,
+              title: "Living in the shadow of a great man",
+              topic: "mitch",
+              author: "butter_bridge",
+              body: "I find this existence challenging",
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+            })
+          );
         });
     });
     test('responds with status 404 and msg "article not found" for valid but NON-EXISTENT article ID', () => {
