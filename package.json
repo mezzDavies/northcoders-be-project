@@ -6,8 +6,10 @@
   "scripts": {
     "setup-dbs": "psql -f ./db/setup.sql",
     "seed": "node ./db/seeds/run-seed.js",
+    "seed-test": "NODE_ENV=test node ./db/seeds/run-seed.js",
     "test": "jest --verbose",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "view-test": "psql -f view-test-db.sql > view-test-db.txt"
   },
   "repository": {
     "type": "git",

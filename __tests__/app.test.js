@@ -51,9 +51,41 @@ describe("GET", () => {
         });
     });
   });
+  describe("/api/articles/:articleId", () => {
+    test("responds with status 200 and correct article object", () => {
+      return request(app)
+        .get("/api/articles/1")
+        .expect(200)
+        .then((res) => {
+          const article = res.body.article;
+          expect(article).toEqual(
+            expect.objectContaining({
+              article_id: 1,
+              title: "Living in the shadow of a great man",
+              topic: "mitch",
+              author: "butter_bridge",
+              body: "I find this existence challenging",
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+            })
+          );
+        });
+    });
+    test('responds with status 404 and msg "article not found" for valid but NON-EXISTENT article ID', () => {
+      return request(app)
+        .get("/api/articles/99999999")
+        .expect(404)
+        .then((res) => {
+          expect(res.body.msg).toBe("article not found");
+        });
+    });
+    test('responds with status 400 and msg "bad request" when passed a bad article ID', () => {
+      return request(app)
+        .get("/api/articles/invalid_id")
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toBe("bad request");
+        });
+    });
+  });
 });
-
-// test is array
-// test length
-// test object - for each?
-// 404 - global test?
