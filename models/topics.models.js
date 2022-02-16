@@ -4,7 +4,7 @@ exports.fetchTopics = () => {
   return db
     .query(
       `SELECT *
-    FROM topics`
+    FROM topics;`
     )
     .then((res) => {
       return res.rows;

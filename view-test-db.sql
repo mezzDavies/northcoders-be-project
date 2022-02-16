@@ -3,7 +3,8 @@
 \dt
 
 SELECT *
-FROM articles;
+FROM articles
+WHERE article_id = 4;
 
 SELECT *
 FROM users;

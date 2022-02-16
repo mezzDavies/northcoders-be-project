@@ -1,7 +1,6 @@
 const db = require("../db/connection");
 
 exports.fetchArticle = (id) => {
-  // console.log("in the model articleId >>>", id);
   return db
     .query(
       `SELECT *
@@ -9,7 +8,14 @@ exports.fetchArticle = (id) => {
     WHERE article_id = $1;`,
       [id]
     )
-    .then((res) => {
-      return res.rows[0];
+    .then(({ rows }) => {
+      const article = rows[0];
+      if (!article) {
+        return Promise.reject({
+          status: 404,
+          msg: "article not found",
+        });
+      }
+      return article;
     });
 };

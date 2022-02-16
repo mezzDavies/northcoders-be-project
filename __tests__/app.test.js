@@ -69,5 +69,21 @@ describe("GET", () => {
           });
         });
     });
+    test('responds with status 404 and msg "article not found" for valid but NON-EXISTENT article ID', () => {
+      return request(app)
+        .get("/api/articles/99999999")
+        .expect(404)
+        .then((res) => {
+          expect(res.body.msg).toBe("article not found");
+        });
+    });
+    test('responds with status 400 and msg "bad request" when passed a bad article ID', () => {
+      return request(app)
+        .get("/api/articles/invalid_id")
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toBe("bad request");
+        });
+    });
   });
 });
