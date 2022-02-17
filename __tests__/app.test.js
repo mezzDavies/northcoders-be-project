@@ -91,7 +91,7 @@ describe("GET", () => {
 });
 describe("PATCH", () => {
   describe("/api/articles/:article_id", () => {
-    test("returns correct object with corectly updated (positive) comment vote", () => {
+    test("responds with status 201 and correct object with corectly updated (positive) comment vote", () => {
       const req = { inc_votes: 1 };
       return request(app)
         .patch("/api/articles/1")
@@ -111,7 +111,7 @@ describe("PATCH", () => {
           );
         });
     });
-    test("returns correct object with corectly updated (negative) comment vote", () => {
+    test("responds with status 201 and correct object with corectly updated (negative) comment vote", () => {
       const req = { inc_votes: -10 };
       return request(app)
         .patch("/api/articles/1")
@@ -129,6 +129,46 @@ describe("PATCH", () => {
               votes: 90,
             })
           );
+        });
+    });
+    test('responds with status 404 and msg "article not found" for valid but NON-EXISTENT article', () => {
+      const req = { inc_votes: -10 };
+      return request(app)
+        .patch("/api/articles/999999999")
+        .send(req)
+        .expect(404)
+        .then((res) => {
+          expect(res.body.msg).toBe("article not found");
+        });
+    });
+    test('responds with status 400 and msg "bad request" when passed a bad article ID', () => {
+      const req = { inc_votes: -10 };
+      return request(app)
+        .patch("/api/articles/invalid_id")
+        .send(req)
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toBe("bad request");
+        });
+    });
+    test('responds with status 400 and msg "bad request" when req body is malformed', () => {
+      const req = {};
+      return request(app)
+        .patch("/api/articles/invalid_id")
+        .send(req)
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toBe("bad request");
+        });
+    });
+    test('responds with status 400 and msg "bad request" when req body uses incorrect type', () => {
+      const req = { inc_votes: "ten" };
+      return request(app)
+        .patch("/api/articles/invalid_id")
+        .send(req)
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toBe("bad request");
         });
     });
   });

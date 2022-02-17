@@ -21,7 +21,6 @@ exports.fetchArticle = (id) => {
 };
 
 exports.updateArticle = (id, patch) => {
-  // console.log("in the patch model with id and patch:", id, patch);
   const { inc_votes } = patch;
   return db
     .query(
@@ -32,6 +31,14 @@ exports.updateArticle = (id, patch) => {
       [inc_votes, id]
     )
     .then(({ rows }) => {
-      return rows[0];
+      const updatedArticle = rows[0];
+      if (!updatedArticle) {
+        return Promise.reject({
+          status: 404,
+          msg: "article not found",
+        });
+      }
+
+      return updatedArticle;
     });
 };
