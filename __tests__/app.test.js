@@ -89,3 +89,47 @@ describe("GET", () => {
     });
   });
 });
+describe("PATCH", () => {
+  describe("/api/articles/:article_id", () => {
+    test("returns correct object with corectly updated (positive) comment vote", () => {
+      const req = { inc_votes: 1 };
+      return request(app)
+        .patch("/api/articles/1")
+        .send(req)
+        .expect(201)
+        .then((res) => {
+          expect(res.body.updated_article).toEqual(
+            expect.objectContaining({
+              article_id: 1,
+              title: "Living in the shadow of a great man",
+              topic: "mitch",
+              author: "butter_bridge",
+              body: "I find this existence challenging",
+              created_at: expect.any(String),
+              votes: 101,
+            })
+          );
+        });
+    });
+    test("returns correct object with corectly updated (negative) comment vote", () => {
+      const req = { inc_votes: -10 };
+      return request(app)
+        .patch("/api/articles/1")
+        .send(req)
+        .expect(201)
+        .then((res) => {
+          expect(res.body.updated_article).toEqual(
+            expect.objectContaining({
+              article_id: 1,
+              title: "Living in the shadow of a great man",
+              topic: "mitch",
+              author: "butter_bridge",
+              body: "I find this existence challenging",
+              created_at: expect.any(String),
+              votes: 90,
+            })
+          );
+        });
+    });
+  });
+});

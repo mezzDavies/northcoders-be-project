@@ -4,7 +4,7 @@
 
 SELECT *
 FROM articles
-WHERE article_id = 4;
+WHERE article_id = 1;
 
 SELECT *
 FROM users;
