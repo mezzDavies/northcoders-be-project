@@ -42,3 +42,14 @@ exports.updateArticle = (id, patch) => {
       return updatedArticle;
     });
 };
+
+exports.fetchArticles = () => {
+  return db
+    .query(
+      `SELECT * FROM articles
+  ORDER BY created_at DESC;`
+    )
+    .then((res) => {
+      return res.rows;
+    });
+};
