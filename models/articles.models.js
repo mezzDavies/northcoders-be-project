@@ -19,3 +19,26 @@ exports.fetchArticle = (id) => {
       return article;
     });
 };
+
+exports.updateArticle = (id, patch) => {
+  const { inc_votes } = patch;
+  return db
+    .query(
+      `UPDATE articles
+  SET votes = votes + $1
+  WHERE article_id = $2
+  RETURNING *;`,
+      [inc_votes, id]
+    )
+    .then(({ rows }) => {
+      const updatedArticle = rows[0];
+      if (!updatedArticle) {
+        return Promise.reject({
+          status: 404,
+          msg: "article not found",
+        });
+      }
+
+      return updatedArticle;
+    });
+};

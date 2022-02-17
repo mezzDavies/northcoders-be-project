@@ -89,3 +89,87 @@ describe("GET", () => {
     });
   });
 });
+describe("PATCH", () => {
+  describe("/api/articles/:article_id", () => {
+    test("responds with status 201 and correct object with corectly updated (positive) comment vote", () => {
+      const req = { inc_votes: 1 };
+      return request(app)
+        .patch("/api/articles/1")
+        .send(req)
+        .expect(201)
+        .then((res) => {
+          expect(res.body.updated_article).toEqual(
+            expect.objectContaining({
+              article_id: 1,
+              title: "Living in the shadow of a great man",
+              topic: "mitch",
+              author: "butter_bridge",
+              body: "I find this existence challenging",
+              created_at: expect.any(String),
+              votes: 101,
+            })
+          );
+        });
+    });
+    test("responds with status 201 and correct object with corectly updated (negative) comment vote", () => {
+      const req = { inc_votes: -10 };
+      return request(app)
+        .patch("/api/articles/1")
+        .send(req)
+        .expect(201)
+        .then((res) => {
+          expect(res.body.updated_article).toEqual(
+            expect.objectContaining({
+              article_id: 1,
+              title: "Living in the shadow of a great man",
+              topic: "mitch",
+              author: "butter_bridge",
+              body: "I find this existence challenging",
+              created_at: expect.any(String),
+              votes: 90,
+            })
+          );
+        });
+    });
+    test('responds with status 404 and msg "article not found" for valid but NON-EXISTENT article', () => {
+      const req = { inc_votes: -10 };
+      return request(app)
+        .patch("/api/articles/999999999")
+        .send(req)
+        .expect(404)
+        .then((res) => {
+          expect(res.body.msg).toBe("article not found");
+        });
+    });
+    test('responds with status 400 and msg "bad request" when passed a bad article ID', () => {
+      const req = { inc_votes: -10 };
+      return request(app)
+        .patch("/api/articles/invalid_id")
+        .send(req)
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toBe("bad request");
+        });
+    });
+    test('responds with status 400 and msg "bad request" when req body is malformed', () => {
+      const req = {};
+      return request(app)
+        .patch("/api/articles/invalid_id")
+        .send(req)
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toBe("bad request");
+        });
+    });
+    test('responds with status 400 and msg "bad request" when req body uses incorrect type', () => {
+      const req = { inc_votes: "ten" };
+      return request(app)
+        .patch("/api/articles/invalid_id")
+        .send(req)
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toBe("bad request");
+        });
+    });
+  });
+});
