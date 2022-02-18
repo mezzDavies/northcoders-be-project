@@ -14,7 +14,7 @@ afterAll(() => {
 });
 
 describe("Global 404 test", () => {
-  test('returns a 404 status and "path not found" msg', () => {
+  test('returns a 404 status and "path not found" msg when invalid url is used', () => {
     return request(app)
       .get("/api/invalid_url")
       .expect(404)
@@ -89,21 +89,14 @@ describe("GET", () => {
     });
   });
   describe("/api/articles", () => {
-    test("responds with status 200 and an array of ALL articles", () => {
-      return request(app)
-        .get("/api/articles")
-        .expect(200)
-        .then((res) => {
-          expect(res.body.articles).toBeInstanceOf(Array);
-          expect(res.body.articles).toHaveLength(12);
-        });
-    });
-    test("responds with status 200 and each article object has correct properties", () => {
+    test("responds with status 200 and an array of ALL article objects", () => {
       return request(app)
         .get("/api/articles")
         .expect(200)
         .then((res) => {
           const articles = res.body.articles;
+          expect(articles).toBeInstanceOf(Array);
+          expect(articles).toHaveLength(12);
           articles.forEach((article) => {
             expect(article).toEqual(
               expect.objectContaining({
@@ -126,6 +119,53 @@ describe("GET", () => {
         .then((res) => {
           const articles = res.body.articles;
           expect(articles).toBeSortedBy("created_at", { descending: true });
+        });
+    });
+  });
+  describe("/api/articles/:article_id/comments", () => {
+    test("responds with status 200 and an array of comment objects (specific to article_id)", () => {
+      return request(app)
+        .get("/api/articles/3/comments")
+        .expect(200)
+        .then((res) => {
+          const comments = res.body.comments;
+          expect(comments).toBeInstanceOf(Array);
+          expect(comments).toHaveLength(2);
+          comments.forEach((comment) => {
+            expect(comment).toEqual(
+              expect.objectContaining({
+                comment_id: expect.any(Number),
+                votes: expect.any(Number),
+                created_at: expect.any(String),
+                author: expect.any(String),
+                body: expect.any(String),
+              })
+            );
+          });
+        });
+    });
+    test("responds with status 200 and an empty array for a valid & existing article ID with no comments", () => {
+      return request(app)
+        .get("/api/articles/2/comments")
+        .expect(200)
+        .then((res) => {
+          expect(res.body.comments).toEqual([]);
+        });
+    });
+    test('responds with status 400 and msg "bad request" when passed a bad article ID', () => {
+      return request(app)
+        .get("/api/articles/invalid_id/comments")
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toEqual("bad request");
+        });
+    });
+    test('responds status 404 and msg "article not found" when passed a valid but non-existent article ID', () => {
+      return request(app)
+        .get("/api/articles/999999/comments")
+        .expect(404)
+        .then((res) => {
+          expect(res.body.msg).toEqual("article not found");
         });
     });
   });
@@ -214,3 +254,6 @@ describe("PATCH", () => {
     });
   });
 });
+
+// 400 : "bad request" for invalid article ID eg banana
+// 404 : "article not found" for valid but non existent article ID

@@ -9,11 +9,16 @@ const {
   getArticles,
 } = require("./controllers/articles.controllers");
 
+const {
+  getCommentsByArticleId,
+} = require("./controllers/comments.controllers");
+
 app.use(express.json());
 
 app.get("/api/topics", getTopics);
 app.get("/api/articles/:articleId", getArticle);
 app.get("/api/articles", getArticles);
+app.get("/api/articles/:articleId/comments", getCommentsByArticleId);
 
 app.patch("/api/articles/:articleId", patchArticle);
 
