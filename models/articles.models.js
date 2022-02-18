@@ -38,7 +38,6 @@ exports.updateArticle = (id, patch) => {
           msg: "article not found",
         });
       }
-
       return updatedArticle;
     });
 };
@@ -51,5 +50,22 @@ exports.fetchArticles = () => {
     )
     .then((res) => {
       return res.rows;
+    });
+};
+
+exports.checkArticleExists = (id) => {
+  return db
+    .query(
+      ` SELECT * FROM articles
+  WHERE article_id = $1`,
+      [id]
+    )
+    .then((res) => {
+      if (res.rows.length === 0) {
+        return Promise.reject({
+          status: 404,
+          msg: "article not found",
+        });
+      }
     });
 };
