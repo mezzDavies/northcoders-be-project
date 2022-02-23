@@ -235,7 +235,7 @@ describe("PATCH", () => {
     test('responds with status 400 and msg "bad request" when req body is malformed', () => {
       const req = {};
       return request(app)
-        .patch("/api/articles/invalid_id")
+        .patch("/api/articles/1")
         .send(req)
         .expect(400)
         .then((res) => {
@@ -245,7 +245,7 @@ describe("PATCH", () => {
     test('responds with status 400 and msg "bad request" when req body uses incorrect type', () => {
       const req = { inc_votes: "ten" };
       return request(app)
-        .patch("/api/articles/invalid_id")
+        .patch("/api/articles/1")
         .send(req)
         .expect(400)
         .then((res) => {
@@ -254,6 +254,71 @@ describe("PATCH", () => {
     });
   });
 });
-
-// 400 : "bad request" for invalid article ID eg banana
-// 404 : "article not found" for valid but non existent article ID
+describe("POST", () => {
+  describe("/api/articles/:article_id/comments", () => {
+    test("responds with status 201 and an object of the posted comment", () => {
+      const req = {
+        username: "rogersop",
+        body: "Yeah I agree. Totally!",
+      };
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send(req)
+        .expect(201)
+        .then((res) => {
+          expect(res.body.comment).toEqual(
+            expect.objectContaining({
+              author: expect.any(String),
+              body: expect.any(String),
+            })
+          );
+        });
+    });
+    test('responds with status 404 and msg "article not found" for valid but NON-EXISTENT ID', () => {
+      const req = {
+        username: "rogersop",
+        body: "Yeah I agree. Totally!",
+      };
+      return request(app)
+        .post("/api/articles/99999/comments")
+        .send(req)
+        .expect(404)
+        .then((res) => {
+          expect(res.body).toEqual({ msg: "article not found" });
+        });
+    });
+    test('responds with status 400 and msg "bad request" when passed a bad ID', () => {
+      const req = {
+        username: "rogersop",
+        body: "Yeah I agree. Totally!",
+      };
+      return request(app)
+        .post("/api/articles/invalid_id/comments")
+        .send(req)
+        .expect(400)
+        .then((res) => {
+          expect(res.body).toEqual({ msg: "bad request" });
+        });
+    });
+    test('responds with status 400 and msg "bad request" when req body is malformed', () => {
+      const req = {};
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send(req)
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toBe("bad request");
+        });
+    });
+    test('responds with status 400 and msg "bad request" when req body uses incorrect type', () => {
+      const req = { inc_votes: "ten" };
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send(req)
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toBe("bad request");
+        });
+    });
+  });
+});

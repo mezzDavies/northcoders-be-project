@@ -11,6 +11,7 @@ const {
 
 const {
   getCommentsByArticleId,
+  postComment,
 } = require("./controllers/comments.controllers");
 
 app.use(express.json());
@@ -21,6 +22,8 @@ app.get("/api/articles", getArticles);
 app.get("/api/articles/:articleId/comments", getCommentsByArticleId);
 
 app.patch("/api/articles/:articleId", patchArticle);
+
+app.post("/api/articles/:articleId/comments", postComment);
 
 app.use("/*", (req, res) => {
   return res.status(404).send({ msg: "path not found" });

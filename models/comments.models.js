@@ -17,3 +17,17 @@ WHERE article_id = $1;`,
       return res.rows;
     });
 };
+
+exports.addComment = (artId, user, body) => {
+  return db
+    .query(
+      `INSERT INTO comments (article_id, author, body)
+  VALUES ($1, $2, $3)
+  RETURNING author, body;
+`,
+      [artId, user, body]
+    )
+    .then((res) => {
+      return res.rows[0];
+    });
+};
