@@ -2,10 +2,7 @@
 
 \dt
 
-SELECT comment_id, votes, created_at, author, body
+SELECT *
 FROM comments
 WHERE article_id = 3;
 
-SELECT *
-FROM comments
-WHERE article_id = 2;
