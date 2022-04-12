@@ -3,6 +3,5 @@
 \dt
 
 SELECT *
-FROM comments
-WHERE article_id = 3;
+FROM comments WHERE comment_id = 1;
 

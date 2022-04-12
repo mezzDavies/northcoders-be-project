@@ -13,14 +13,16 @@ afterAll(() => {
   return db.end();
 });
 
-describe("Global 404 test", () => {
-  test('returns a 404 status and "path not found" msg when invalid url is used', () => {
-    return request(app)
-      .get("/api/invalid_url")
-      .expect(404)
-      .then(({ body: { msg } }) => {
-        expect(msg).toBe("path not found");
-      });
+describe("SERVER", () => {
+  describe("404 test", () => {
+    test('returns a 404 status and "path not found" msg when invalid url is used', () => {
+      return request(app)
+        .get("/api/invalid-url")
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("path not found");
+        });
+    });
   });
 });
 describe("GET", () => {
@@ -318,6 +320,37 @@ describe("POST", () => {
         .expect(400)
         .then((res) => {
           expect(res.body.msg).toBe("bad request");
+        });
+    });
+  });
+});
+describe("DELETE", () => {
+  describe("/api/comments/:comment_id", () => {
+    test("responds with status 204 and comment is deleted from database", () => {
+      return request(app)
+        .delete("/api/comments/1")
+        .expect(204)
+        .then(() => {
+          return db.query(`SELECT * FROM comments WHERE comment_id = 1;`);
+        })
+        .then((res) => {
+          expect(res.rows).toEqual([]);
+        });
+    });
+    test('responds with status 400 msg "bad request" when passed a bad comment ID', () => {
+      return request(app)
+        .delete("/api/comments/invalid_id")
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toEqual("bad request");
+        });
+    });
+    test('responds with status 404 msg "comment not found" when passed a valid but NON-EXISTENT comment ID', () => {
+      return request(app)
+        .delete("/api/comments/999999")
+        .expect(404)
+        .then((res) => {
+          expect(res.body.msg).toEqual("comment not found");
         });
     });
   });
