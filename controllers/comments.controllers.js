@@ -1,7 +1,10 @@
 const {
   fetchCommentsByArticleId,
   addComment,
+  removeCommentById,
 } = require("../models/comments.models");
+
+const { checkCommentExists } = require("../util functions/utils");
 
 const { checkArticleExists } = require("../models/articles.models");
 
@@ -29,6 +32,19 @@ exports.postComment = (req, res, next) => {
       res.status(201).send({ comment });
     })
     .catch((err) => {
+      next(err);
+    });
+};
+
+exports.deleteCommentById = (req, res, next) => {
+  const { commentId } = req.params;
+
+  removeCommentById(commentId)
+    .then(() => {
+      res.status(204).send();
+    })
+    .catch((err) => {
+      // console.log("err in delete comment by id controller", err);
       next(err);
     });
 };
