@@ -13,7 +13,7 @@ afterAll(() => {
   return db.end();
 });
 
-describe("SERVER", () => {
+describe("APP", () => {
   describe("404 test", () => {
     test('returns a 404 status and "path not found" msg when invalid url is used', () => {
       return request(app)
@@ -168,6 +168,55 @@ describe("GET", () => {
         .expect(404)
         .then((res) => {
           expect(res.body.msg).toEqual("article not found");
+        });
+    });
+  });
+  describe("/api/users", () => {
+    test("responds with status 200 and an array of ALL users", () => {
+      return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then(({ body: { users } }) => {
+          expect(users).toBeInstanceOf(Array);
+          expect(users).toHaveLength(4);
+        });
+    });
+    test("each user object has username property", () => {
+      return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then(({ body: { users } }) => {
+          users.forEach((user) => {
+            expect(user).toEqual(
+              expect.objectContaining({
+                username: expect.any(String),
+              })
+            );
+          });
+        });
+    });
+  });
+  describe("/api/users/:username", () => {
+    test('"responds with status 200 and correct user object" ', () => {
+      return request(app)
+        .get("/api/users/lurker")
+        .expect(200)
+        .then(({ body: { user } }) => {
+          expect(user).toEqual(
+            expect.objectContaining({
+              username: expect.any(String),
+              name: expect.any(String),
+              avatar_url: expect.any(String),
+            })
+          );
+        });
+    });
+    test('responds with status 404 and msg "user not found" for non-existent username', () => {
+      return request(app)
+        .get("/api/users/notAUser")
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toEqual("user not found");
         });
     });
   });

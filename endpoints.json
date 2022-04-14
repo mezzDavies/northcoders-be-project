@@ -23,5 +23,13 @@
         }
       ]
     }
+  },
+  // blank endpoint object below:
+  "GET /api/xxx": {
+    "description": "",
+    "queries": [],
+    "exampleResponse": {
+      "xxx": [{}]
+    }
   }
 }
