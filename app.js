@@ -15,12 +15,19 @@ const {
   deleteCommentById,
 } = require("./controllers/comments.controllers");
 
+const {
+  getUsers,
+  getUserByUsername,
+} = require("./controllers/users.controllers");
+
 app.use(express.json());
 
 app.get("/api/topics", getTopics);
 app.get("/api/articles/:articleId", getArticle);
 app.get("/api/articles", getArticles);
 app.get("/api/articles/:articleId/comments", getCommentsByArticleId);
+app.get("/api/users", getUsers);
+app.get("/api/users/:username", getUserByUsername);
 
 app.patch("/api/articles/:articleId", patchArticle);
 
