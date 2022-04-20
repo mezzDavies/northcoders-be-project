@@ -1,8 +1,15 @@
 const express = require("express");
 const app = express();
 
-const { handle500s, handleCustomErrors } = require("./error-handlers");
+const {
+  handle404s,
+  handle500s,
+  handleCustomErrors,
+  handlePsqlErrors,
+} = require("./error-handlers");
+
 const { getTopics } = require("./controllers/topics.controllers");
+
 const {
   getArticle,
   patchArticle,
@@ -35,9 +42,8 @@ app.post("/api/articles/:articleId/comments", postComment);
 
 app.delete("/api/comments/:commentId", deleteCommentById);
 
-app.all("/*", (req, res) => {
-  return res.status(404).send({ msg: "path not found" });
-});
+app.all("/*", handle404s);
+app.use(handlePsqlErrors);
 app.use(handleCustomErrors);
 app.use(handle500s);
 
