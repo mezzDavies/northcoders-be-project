@@ -123,6 +123,75 @@ describe("GET", () => {
           expect(articles).toBeSortedBy("created_at", { descending: true });
         });
     });
+    test("user can change default sorting order to ascending", () => {
+      return request(app)
+        .get("/api/articles?order=asc")
+        .expect(200)
+        .then((res) => {
+          const articles = res.body.articles;
+          expect(articles).toBeSortedBy("created_at");
+        });
+    });
+    test("user can make sort_by query for votes", () => {
+      return request(app)
+        .get("/api/articles?sort_by=votes")
+        .expect(200)
+        .then((res) => {
+          const articles = res.body.articles;
+          expect(articles).toBeSortedBy("votes", { descending: true });
+        });
+    });
+    test("user can change sorting order of a query to ascending", () => {
+      return request(app)
+        .get("/api/articles?sort_by=votes&order=asc")
+        .expect(200)
+        .then((res) => {
+          const articles = res.body.articles;
+          expect(articles).toBeSortedBy("votes");
+        });
+    });
+
+    test('responds with status 400 and msg "bad request" when passed invalid sort_by query', () => {
+      return request(app)
+        .get("/api/articles?sort_by=invalid_query")
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toEqual("bad request");
+        });
+    });
+    test('responds with status 400 and msg "bad request" when passed invalid order query', () => {
+      return request(app)
+        .get("/api/articles?order=invalid_order")
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toEqual("bad request");
+        });
+    });
+    test("user can filter articles by topic", () => {
+      return request(app)
+        .get("/api/articles?topic=cats")
+        .expect(200)
+        .then((res) => {
+          const articles = res.body.articles;
+          expect(articles).toBeInstanceOf(Array);
+          expect(articles).toHaveLength(1);
+          articles.forEach((article) => {
+            expect(article).toEqual(
+              expect.objectContaining({
+                topic: "cats",
+              })
+            );
+          });
+        });
+    });
+    test('responds with status 400 and msg "bad request" when passed invalid topic query', () => {
+      return request(app)
+        .get("/api/articles?topic=invalid_order")
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toEqual("bad request");
+        });
+    });
   });
   describe("/api/articles/:article_id/comments", () => {
     test("responds with status 200 and an array of comment objects (specific to article_id)", () => {
@@ -375,7 +444,7 @@ describe("POST", () => {
 });
 describe("DELETE", () => {
   describe("/api/comments/:comment_id", () => {
-    test("responds with status 204 and comment is deleted from database", () => {
+    test("responds with status 204 and comment is no longer in database", () => {
       return request(app)
         .delete("/api/comments/1")
         .expect(204)

@@ -42,15 +42,42 @@ exports.updateArticle = (id, patch) => {
     });
 };
 
-exports.fetchArticles = () => {
-  return db
-    .query(
-      `SELECT * FROM articles
-  ORDER BY created_at DESC;`
-    )
-    .then((res) => {
+exports.fetchArticles = (
+  sortBy = "created_at",
+  order = "DESC",
+  topic = null
+) => {
+  const validSortBys = ["created_at", "votes"];
+  const validOrders = ["asc", "DESC"];
+  const validTopics = ["mitch", "cats", null];
+  let topicQuery = "";
+
+  if (topic) {
+    topicQuery = `WHERE topic = '${topic}' `;
+  }
+
+  if (
+    !validSortBys.includes(sortBy) ||
+    !validOrders.includes(order) ||
+    !validTopics.includes(topic)
+  ) {
+    return Promise.reject({
+      status: 400,
+      msg: "bad request",
+    });
+  } else {
+    let queryString = `SELECT * FROM articles `;
+    let queryOrder = `ORDER BY ${sortBy} ${order};`;
+    if (topicQuery !== "") {
+      queryString += topicQuery += queryOrder;
+    } else {
+      queryString += queryOrder;
+    }
+
+    return db.query(queryString).then((res) => {
       return res.rows;
     });
+  }
 };
 
 exports.checkArticleExists = (id) => {

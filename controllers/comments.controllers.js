@@ -41,10 +41,9 @@ exports.deleteCommentById = (req, res, next) => {
 
   removeCommentById(commentId)
     .then(() => {
-      res.status(204).send();
+      res.sendStatus(204);
     })
     .catch((err) => {
-      // console.log("err in delete comment by id controller", err);
       next(err);
     });
 };

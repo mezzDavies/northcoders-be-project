@@ -2,6 +2,8 @@
 
 \dt
 
-SELECT * FROM users
-WHERE username = "lurker";
+SELECT * FROM articles
+WHERE topic = 'mitch'
+ORDER BY created_at DESC;
+
 
