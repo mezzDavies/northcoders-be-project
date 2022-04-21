@@ -309,7 +309,7 @@ describe("GET", () => {
 });
 describe("PATCH", () => {
   describe("/api/articles/:article_id", () => {
-    test("responds with status 200 and correct object with correctly updated (positive) comment vote", () => {
+    test("responds with status 200 and correct object with correctly updated (positive) votes property", () => {
       const req = { inc_votes: 1 };
       return request(app)
         .patch("/api/articles/1")
@@ -349,7 +349,7 @@ describe("PATCH", () => {
           );
         });
     });
-    test('responds with status 404 and msg "article not found" for valid but NON-EXISTENT article', () => {
+    test('responds with status 404 and msg "article not found" for valid ID but NON-EXISTENT article', () => {
       const req = { inc_votes: -10 };
       return request(app)
         .patch("/api/articles/999999999")
@@ -383,6 +383,86 @@ describe("PATCH", () => {
       const req = { inc_votes: "ten" };
       return request(app)
         .patch("/api/articles/1")
+        .send(req)
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toBe("bad request");
+        });
+    });
+  });
+  describe("/api/comments/:comment_id", () => {
+    test("responds with status 200 and correct object with correctly updated (positive) votes property", () => {
+      const req = { inc_votes: 1 };
+      return request(app)
+        .patch("/api/comments/1")
+        .send(req)
+        .expect(200)
+        .then(({ body: { comment } }) => {
+          expect(comment).toEqual(
+            expect.objectContaining({
+              article_id: 1,
+              body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+              article_id: 9,
+              author: "butter_bridge",
+              votes: 17,
+              created_at: expect.any(String),
+            })
+          );
+        });
+    });
+    test("responds with status 200 and correct object with correctly updated (negative) votes property", () => {
+      const req = { inc_votes: -1 };
+      return request(app)
+        .patch("/api/comments/1")
+        .send(req)
+        .expect(200)
+        .then(({ body: { comment } }) => {
+          expect(comment).toEqual(
+            expect.objectContaining({
+              article_id: 1,
+              body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+              article_id: 9,
+              author: "butter_bridge",
+              votes: 15,
+              created_at: expect.any(String),
+            })
+          );
+        });
+    });
+    test('responds with status 404 and msg "comment not found" for a valid ID of NON-EXISTENT comment', () => {
+      const req = { inc_votes: -1 };
+      return request(app)
+        .patch("/api/comments/999999999")
+        .send(req)
+        .expect(404)
+        .then((res) => {
+          expect(res.body.msg).toBe("comment not found");
+        });
+    });
+    test('responds with status 400 and msg "bad request" when passed a bad comment ID', () => {
+      const req = { inc_votes: -1 };
+      return request(app)
+        .patch("/api/comments/invalid_id")
+        .send(req)
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toBe("bad request");
+        });
+    });
+    test('responds with status 400 and msg "bad request" when req body is malformed', () => {
+      const req = {};
+      return request(app)
+        .patch("/api/comments/1")
+        .send(req)
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toBe("bad request");
+        });
+    });
+    test('responds with status 400 and msg "bad request" when req body uses incorrect type', () => {
+      const req = { inc_votes: "ten" };
+      return request(app)
+        .patch("/api/comments/1")
         .send(req)
         .expect(400)
         .then((res) => {
