@@ -3,9 +3,10 @@ const db = require("../db/connection");
 exports.fetchArticle = (id) => {
   return db
     .query(
-      `SELECT *
-    FROM articles
-    WHERE article_id = $1;`,
+      `SELECT articles.*, COUNT(comments.article_id) AS comment_count
+      FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id
+      WHERE articles.article_id = $1
+      GROUP BY articles.article_id;`,
       [id]
     )
     .then(({ rows }) => {
@@ -66,12 +67,14 @@ exports.fetchArticles = (
       msg: "bad request",
     });
   } else {
-    let queryString = `SELECT * FROM articles `;
-    let queryOrder = `ORDER BY ${sortBy} ${order};`;
+    let queryString = `SELECT articles.*, COUNT(comments.article_id) AS comment_count
+                      FROM articles LEFT JOIN comments
+                      ON articles.article_id = comments.article_id `;
+    const queryEnd = ` GROUP BY articles.article_id ORDER BY ${sortBy} ${order};`;
     if (topicQuery !== "") {
-      queryString += topicQuery += queryOrder;
+      queryString += topicQuery += queryEnd;
     } else {
-      queryString += queryOrder;
+      queryString += queryEnd;
     }
 
     return db.query(queryString).then((res) => {
@@ -83,8 +86,8 @@ exports.fetchArticles = (
 exports.checkArticleExists = (id) => {
   return db
     .query(
-      ` SELECT * FROM articles
-  WHERE article_id = $1`,
+      ` SELECT * FROM articles 
+      WHERE article_id = $1`,
       [id]
     )
     .then((res) => {
