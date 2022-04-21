@@ -69,7 +69,7 @@ Bear in mind, handling bad inputs from clients doesn't necessarily have to lead 
   - `sort_by` a column that doesn't exist
   - `order` !== "asc" / "desc"
   - `topic` that is not in the database
-  - `topic` that exists but does not have any articles associated with it
+  - `topic` that exists but does not have any articles associated with it - LOOK INTO THIS ONE
 
 ### PATCH `/api/comments/:comment_id`
 

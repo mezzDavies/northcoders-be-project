@@ -48,3 +48,17 @@ exports.removeCommentById = (commentId) => {
       }
     });
 };
+
+exports.updateCommentByid = (commentId, voteValue) => {
+  return db
+    .query(
+      `UPDATE comments
+  SET votes = votes + $1
+  WHERE comment_id = $2
+  RETURNING *;`,
+      [voteValue, commentId]
+    )
+    .then(({ rows }) => {
+      return rows[0];
+    });
+};
