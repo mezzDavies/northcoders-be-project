@@ -1,6 +1,8 @@
 const db = require("../db/connection");
+const { promiseRejector } = require("../util_functions/promiseRejector");
+const { getTopics } = require("../util_functions/getTopics");
 
-exports.fetchArticle = (id) => {
+exports.fetchArticleById = (id) => {
   return db
     .query(
       `SELECT articles.*, COUNT(comments.article_id) AS comment_count
@@ -12,16 +14,13 @@ exports.fetchArticle = (id) => {
     .then(({ rows }) => {
       const article = rows[0];
       if (!article) {
-        return Promise.reject({
-          status: 404,
-          msg: "article not found",
-        });
+        return promiseRejector(404, "article");
       }
       return article;
     });
 };
 
-exports.updateArticle = (id, patch) => {
+exports.updateArticleById = (id, patch) => {
   const { inc_votes } = patch;
   return db
     .query(
@@ -34,10 +33,7 @@ exports.updateArticle = (id, patch) => {
     .then(({ rows }) => {
       const updatedArticle = rows[0];
       if (!updatedArticle) {
-        return Promise.reject({
-          status: 404,
-          msg: "article not found",
-        });
+        return promiseRejector(404, "article");
       }
       return updatedArticle;
     });
@@ -50,7 +46,7 @@ exports.fetchArticles = (
 ) => {
   const validSortBys = ["created_at", "votes"];
   const validOrders = ["asc", "DESC"];
-  const validTopics = ["mitch", "cats", null];
+  const validTopics = ["mitch", "cats", "football", null];
   let topicQuery = "";
 
   if (topic) {
@@ -83,19 +79,43 @@ exports.fetchArticles = (
   }
 };
 
-exports.checkArticleExists = (id) => {
-  return db
-    .query(
-      ` SELECT * FROM articles 
-      WHERE article_id = $1`,
-      [id]
-    )
-    .then((res) => {
-      if (res.rows.length === 0) {
-        return Promise.reject({
-          status: 404,
-          msg: "article not found",
-        });
-      }
-    });
-};
+// exports.fetchArticles = (
+//   sortBy = "created_at",
+//   order = "DESC",
+//   topic = null
+// ) => {
+//   const validSortBys = ["created_at", "votes"];
+//   const validOrders = ["asc", "DESC"];
+//   let topicQuery = "";
+//   getTopics().then((validTopics) => {
+//     console.log("validTopics >>>", validTopics);
+//     if (topic) {
+//       topicQuery = `WHERE topic = '${topic}' `;
+//     }
+
+//     if (
+//       !validSortBys.includes(sortBy) ||
+//       !validOrders.includes(order) ||
+//       !validTopics.includes(topic)
+//     ) {
+//       return Promise.reject({
+//         status: 400,
+//         msg: "bad request",
+//       });
+//     } else {
+//       let queryString = `SELECT articles.*, COUNT(comments.article_id) AS comment_count
+//                         FROM articles LEFT JOIN comments
+//                         ON articles.article_id = comments.article_id `;
+//       const queryEnd = ` GROUP BY articles.article_id ORDER BY ${sortBy} ${order};`;
+//       if (topicQuery !== "") {
+//         queryString += topicQuery += queryEnd;
+//       } else {
+//         queryString += queryEnd;
+//       }
+
+//       return db.query(queryString).then((res) => {
+//         return res.rows;
+//       });
+//     }
+//   });
+// };

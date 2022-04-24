@@ -1,5 +1,7 @@
 const db = require("../db/connection");
 
+const { promiseRejector } = require("../util_functions/promiseRejector");
+
 exports.fetchUsers = () => {
   return db
     .query(
@@ -22,13 +24,10 @@ exports.fetchUserByUsername = (username) => {
     )
     .then((res) => {
       if (res.rows.length === 0) {
-        return Promise.reject({
-          status: 404,
-          msg: "user not found",
-        });
+        return promiseRejector(404, "user");
       }
-      const user = res.rows[0];
 
+      const user = res.rows[0];
       return user;
     });
 };

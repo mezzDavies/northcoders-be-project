@@ -1,5 +1,7 @@
 const db = require("../db/connection");
 
+const { promiseRejector } = require("../util_functions/promiseRejector");
+
 exports.fetchCommentsByArticleId = (id) => {
   return db
     .query(
@@ -18,13 +20,12 @@ WHERE article_id = $1;`,
     });
 };
 
-exports.addComment = (artId, user, body) => {
+exports.addCommentByArticleId = (artId, user, body) => {
   return db
     .query(
       `INSERT INTO comments (article_id, author, body)
   VALUES ($1, $2, $3)
-  RETURNING author, body;
-`,
+  RETURNING *;`,
       [artId, user, body]
     )
     .then((res) => {
@@ -41,10 +42,7 @@ exports.removeCommentById = (commentId) => {
     )
     .then(({ rowCount }) => {
       if (rowCount === 0) {
-        return Promise.reject({
-          status: 404,
-          msg: "comment not found",
-        });
+        return promiseRejector(404, "comment");
       }
     });
 };

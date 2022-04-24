@@ -11,8 +11,9 @@
 -- Select * FROM articles 
 -- LEFT JOIN comments ON articles.article_id = comments.article_id;
 
-Select * FROM comments
-WHERE comment_id = 1;
+SELECT topic FROM articles
+GROUP BY topic;
+
 
 -- SELECT articles.*, COUNT(comments.article_id) AS comment_count
 -- FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id

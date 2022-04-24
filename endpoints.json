@@ -3,15 +3,15 @@
     "description": "serves up a json representation of all the available endpoints of the api"
   },
   "GET /api/topics": {
-    "description": "serves an array of all topics",
+    "description": "Serves an array of all topics",
     "queries": [],
     "exampleResponse": {
       "topics": [{ "slug": "football", "description": "Footie!" }]
     }
   },
   "GET /api/articles": {
-    "description": "serves an array of all topics",
-    "queries": ["author", "topic", "sort_by", "order"],
+    "description": "Serves an array of all articles.",
+    "queries": ["topic", "sort_by", "order"],
     "exampleResponse": {
       "articles": [
         {
@@ -19,17 +19,115 @@
           "topic": "cooking",
           "author": "weegembump",
           "body": "Text from the article..",
-          "created_at": 1527695953341
+          "created_at": "2022-04-24T11:21:54.909Z"
         }
       ]
     }
   },
-  // blank endpoint object below:
-  "GET /api/xxx": {
-    "description": "",
+
+  "GET /api/articles/:article_id": {
+    "description": "Serves the requested article.",
     "queries": [],
     "exampleResponse": {
-      "xxx": [{}]
+      "article": {
+        "title": "Running a Node App",
+        "topic": "coding",
+        "author": "jessjelly",
+        "body": "This is part two of a series on how to get up and running with Systemd and Node.js. This part dives deeper into how to successfully run your app with systemd long-term, and how to set it up in a production environment.",
+        "created_at": "2022-04-24T11:21:54.909Z",
+        "votes": 0
+      }
+    }
+  },
+  "PATCH /api/articles/:articleId": {
+    "description": "Updates an article's vote count. Accepts either a positive or negative number for the inc_vote property.",
+    "queries": [],
+    "exampleRequest": "{ inc_votes: 1 }",
+    "exampleResponse": {
+      "article": {
+        "title": "Running a Node App",
+        "topic": "coding",
+        "author": "jessjelly",
+        "body": "This is part two of a series on how to get up and running with Systemd and Node.js. This part dives deeper into how to successfully run your app with systemd long-term, and how to set it up in a production environment.",
+        "created_at": "2022-04-24T11:21:54.909Z",
+        "votes": 1
+      }
+    }
+  },
+  "GET /api/articles/:articleId/comments": {
+    "description": "Serves an array of comments for the requested article",
+    "queries": [],
+    "exampleResponse": {
+      "comments": [
+        {
+          "body": "Itaque quisquam est similique et est perspiciatis reprehenderit voluptatem autem. Voluptatem accusantium eius error adipisci quibusdam doloribus.",
+          "votes": -1,
+          "author": "tickle122",
+          "article_id": 18,
+          "created_at": "2022-04-24T11:21:54.909Z"
+        }
+      ]
+    }
+  },
+  "POST /api/articles/:articleId/comments": {
+    "description": "Adds a commment for the specified article.",
+    "queries": [],
+    "exampleRequest": {
+      "username": "rogersop",
+      "body": "Yeah I agree. Totally!"
+    },
+    "exampleResponse": {
+      "comment": {
+        "comment_id": 19,
+        "body": "Yeah I agree. Totally!",
+        "votes": 0,
+        "author": "rogersop",
+        "article_id": 18,
+        "created_at": "2022-04-24T11:21:54.909Z"
+      }
+    }
+  },
+  "PATCH /api/comments/:comment_id": {
+    "description": "Updates a comment's vote count. Accepts either a positive or negative number for the inc_vote property.",
+    "queries": [],
+    "exampleRequest": "{ inc_votes: 1 }",
+    "exampleResponse": {
+      "comment": {
+        "comment_id": 1,
+        "body": "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+        "article_id": 9,
+        "author": "butter_bridge",
+        "votes": 17,
+        "created_at": "2020-04-06T12:17:00.000Z"
+      }
+    }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "Deletes comment with given id.",
+    "queries": [],
+    "exampleResponse": {}
+  },
+  "GET /api/users/": {
+    "description": "Serves an array of all users",
+    "queries": [],
+    "exampleResponse": {
+      "users": [
+        { "username": "butter_bridge" },
+        { "username": "icellusedkars" },
+        { "username": "rogersop" },
+        { "username": "lurker" }
+      ]
+    }
+  },
+  "GET /api/users/:username": {
+    "description": "Serves requested user",
+    "queries": [],
+    "exampleResponse": {
+      "user": {
+        "username": "lurker",
+        "name": "do_nothing",
+        "avatar_url": "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png"
+      }
     }
   }
 }

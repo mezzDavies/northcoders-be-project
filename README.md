@@ -1,6 +1,6 @@
 # Northcoders News API
 
-To be able to access the correct (local) database you will need to add two .env files to the root of this repo:
+After cloning create these files at the root level of the repo:
 
 .env.development
 
@@ -8,8 +8,8 @@ and
 
 .env.test
 
-These files will each contain a key-value pair to automatically set the correct database (via setting environment variables) to connect to. (The "correct" database depends on whether running the server in test or development mode.)
+You need these files to be able to access the correct (local) database but they are git ignored (for best practices).
 
-The contents (key-value pair) of each .env file should be a string (without the quotes) - "PGDATABASE=database_name" where database_name should be replaced with the corresponding database name from the setup.sql file.
+The contents (key-value pair) of each .env file should be set to a string (without the quotes) - "PGDATABASE=database_name" where "database_name" is replaced with the corresponding database name from the setup.sql file.
 
-These files are git ignored hence the need to add to the repo before deployment.
+The correct database will then automatically be connected to (via setting environment variables). The "correct" database depends on whether you are running the server in test or development mode.
