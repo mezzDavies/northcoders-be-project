@@ -1,13 +1,14 @@
 const {
   fetchCommentsByArticleId,
-  addComment,
+  addCommentByArticleId,
   removeCommentById,
   updateCommentByid,
 } = require("../models/comments.models");
 
-const { checkCommentExists } = require("../util functions/utils");
-
-const { checkArticleExists } = require("../models/articles.models");
+const {
+  checkCommentExists,
+  checkArticleExists,
+} = require("../util_functions/utils");
 
 exports.getCommentsByArticleId = (req, res, next) => {
   const { articleId } = req.params;
@@ -19,22 +20,18 @@ exports.getCommentsByArticleId = (req, res, next) => {
     .then(([comments]) => {
       res.status(200).send({ comments });
     })
-    .catch((err) => {
-      next(err);
-    });
+    .catch(next);
 };
 
-exports.postComment = (req, res, next) => {
+exports.postCommentByArticleId = (req, res, next) => {
   const { articleId } = req.params;
   const { username, body } = req.body;
 
-  addComment(articleId, username, body)
+  addCommentByArticleId(articleId, username, body)
     .then((comment) => {
       res.status(201).send({ comment });
     })
-    .catch((err) => {
-      next(err);
-    });
+    .catch(next);
 };
 
 exports.deleteCommentById = (req, res, next) => {
@@ -44,23 +41,18 @@ exports.deleteCommentById = (req, res, next) => {
     .then(() => {
       res.sendStatus(204);
     })
-    .catch((err) => {
-      next(err);
-    });
+    .catch(next);
 };
 
-exports.patchComment = (req, res, next) => {
+exports.patchCommentById = (req, res, next) => {
   const { commentId } = req.params;
   const voteValue = req.body.inc_votes;
   Promise.all([
     updateCommentByid(commentId, voteValue),
     checkCommentExists(commentId),
   ])
-
     .then(([comment]) => {
       res.status(200).send({ comment });
     })
-    .catch((err) => {
-      next(err);
-    });
+    .catch(next);
 };

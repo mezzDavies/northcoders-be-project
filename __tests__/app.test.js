@@ -288,6 +288,7 @@ describe("GET", () => {
         .get("/api/users/lurker")
         .expect(200)
         .then(({ body: { user } }) => {
+          console.log("User >>>", user);
           expect(user).toEqual(
             expect.objectContaining({
               username: expect.any(String),
@@ -398,6 +399,7 @@ describe("PATCH", () => {
         .send(req)
         .expect(200)
         .then(({ body: { comment } }) => {
+          console.log("new comment >>>", comment);
           expect(comment).toEqual(
             expect.objectContaining({
               article_id: 1,
@@ -485,8 +487,11 @@ describe("POST", () => {
         .then((res) => {
           expect(res.body.comment).toEqual(
             expect.objectContaining({
-              author: expect.any(String),
-              body: expect.any(String),
+              comment_id: expect.any(Number),
+              author: "rogersop",
+              body: "Yeah I agree. Totally!",
+              votes: 0,
+              created_at: expect.any(String),
             })
           );
         });
