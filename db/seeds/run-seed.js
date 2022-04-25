@@ -8,6 +8,7 @@ const ENV = process.env.NODE_ENV || "development";
 const data = {
   test: testData,
   development: devData,
+  production: devData,
 };
 const runSeed = () => {
   return seed(data[ENV]).then(() => db.end());
