@@ -288,7 +288,6 @@ describe("GET", () => {
         .get("/api/users/lurker")
         .expect(200)
         .then(({ body: { user } }) => {
-          console.log("User >>>", user);
           expect(user).toEqual(
             expect.objectContaining({
               username: expect.any(String),
@@ -399,7 +398,6 @@ describe("PATCH", () => {
         .send(req)
         .expect(200)
         .then(({ body: { comment } }) => {
-          console.log("new comment >>>", comment);
           expect(comment).toEqual(
             expect.objectContaining({
               article_id: 1,
