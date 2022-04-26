@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const cors = require("cors");
 
 const {
   handle404s,
@@ -29,6 +30,8 @@ const {
 } = require("./controllers/users.controllers");
 
 const endpoints = require("./endpoints.json");
+
+app.use(cors());
 
 app.use(express.json());
 app.get("/api", (req, res) => {
