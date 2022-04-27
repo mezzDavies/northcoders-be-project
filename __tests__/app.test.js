@@ -240,6 +240,15 @@ describe("GET", () => {
           expect(res.body.comments).toEqual([]);
         });
     });
+    test("responds with status 200 and comments are sorted by date - ascending", () => {
+      return request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then((res) => {
+          const comments = res.body.comments;
+          expect(comments).toBeSortedBy("created_at");
+        });
+    });
     test('responds with status 400 and msg "bad request" when passed a bad article ID', () => {
       return request(app)
         .get("/api/articles/invalid_id/comments")
