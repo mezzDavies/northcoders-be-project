@@ -79,3 +79,7 @@ This will run the unit tests that were written for the development of the app - 
 ## Minimum Versions
 
 This api is tested only with postgres (PostgreSQL) v14.1 and Node v16.x.x
+
+## Cheers
+
+Thanks for taking the time to look at this repo 👍
